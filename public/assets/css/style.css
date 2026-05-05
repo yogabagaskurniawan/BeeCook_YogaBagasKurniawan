@@ -1,0 +1,60 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+
+/* ── Glow blobs ── */
+.glow-yellow {
+  background: #E8B431;
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.30;
+  pointer-events: none;
+}
+.glow-amber {
+  background: #faeaab;
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.60;
+  pointer-events: none;
+}
+
+/* ── Mobile nav slide animation ── */
+#mobile-menu {
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+#mobile-menu.open {
+  max-height: 300px;
+  opacity: 1;
+}
+
+/* ── Hamburger to X ── */
+#hamburger .bar {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+#hamburger.open .bar-top    { transform: translateY(8px) rotate(45deg); }
+#hamburger.open .bar-mid    { opacity: 0; }
+#hamburger.open .bar-bottom { transform: translateY(-8px) rotate(-45deg); }
+
+/* scroll list */
+.scrollbar-hide {
+  scrollbar-width: none;           /* Firefox */
+  -ms-overflow-style: none;        /* IE / Edge */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;                   /* Chrome / Safari */
+}
+
+/* modal */
+/* ── Modal backdrop fade ── */
+#modal-gambar {
+  transition: opacity 0.2s ease;
+}
+#modal-gambar.hidden { display: none; }
+
+/* ── Drag & drop area ── */
+#drop-zone.dragover {
+  border-color: #2563EB;
+  background-color: #EFF6FF;
+}
