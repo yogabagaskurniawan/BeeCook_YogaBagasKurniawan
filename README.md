@@ -100,7 +100,7 @@ composer install
 ### 3. Konfigurasi Environment
 
 ```bash
-cp .env.example .env
+copy .env.example .env   # untuk windows
 php artisan key:generate
 ```
 
@@ -109,7 +109,7 @@ php artisan key:generate
 Secara default proyek menggunakan SQLite. Buat file database-nya:
 
 ```bash
-touch database/database.sqlite
+type nul > database/database.sqlite  # untuk windows
 php artisan migrate
 ```
 
@@ -222,13 +222,3 @@ Proyek ini dikerjakan sebagai bagian dari seleksi **Frontend Developer** di **Gb
 **Yoga Bagas Kurniawan**
 
 - GitHub: [@yogabagaskurniawan](https://github.com/yogabagaskurniawan)
-
----
-
-<div align="center">
-
-**BeeCook** — *Where Quality Meets Flavor* 🍳
-
-Dibuat dengan ❤️ menggunakan Laravel & Tailwind CSS
-
-</div>
