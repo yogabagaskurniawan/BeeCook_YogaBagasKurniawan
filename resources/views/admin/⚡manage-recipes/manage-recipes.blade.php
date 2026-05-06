@@ -153,7 +153,7 @@
                 class="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-800 font-inter font-medium text-sm rounded-lg hover:bg-gray-50 transition-colors"
             >
                 <span wire:target="cancelDelete" wire:loading.remove>Batal</span> 
-                <span wire:target="cancelDelete" wire:loading>Memproses...</span>
+                <span wire:target="cancelDelete" wire:loading>Loading...</span>
             </button>
             <button
                 type="button"
@@ -209,20 +209,6 @@
 
         {{-- Body --}}
         <div class="overflow-y-auto flex-1 px-10 py-6 flex flex-col gap-6">
-
-            {{-- Error --}}
-            @if ($uploadError)
-                <div class="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p class="font-inter text-sm text-red-600">{{ $uploadError }}</p>
-                </div>
-            @endif
-
-            {{-- Success --}}
-            @if ($uploadSuccess)
-                <div class="w-full px-4 py-3 bg-green-50 border border-green-200 rounded-lg">
-                    <p class="font-inter text-sm text-green-600">Gambar berhasil diupload!</p>
-                </div>
-            @endif
 
             {{-- Validation error --}}
             @error('uploadFile')
@@ -323,19 +309,6 @@
                 wire:target="uploadGambar,uploadFile"
                 class="px-4 py-2 bg-blue-600 text-white font-inter font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-                {{-- Spinner saat loading --}}
-                <svg
-                    wire:loading
-                    wire:target="uploadGambar,uploadFile"
-                    class="w-4 h-4 animate-spin"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                </svg>
-
                 <span wire:loading wire:target="uploadGambar">Mengupload...</span>
                 <span wire:loading wire:target="uploadFile">Memproses...</span>
                 <span wire:loading.remove wire:target="uploadGambar,uploadFile">Upload</span>

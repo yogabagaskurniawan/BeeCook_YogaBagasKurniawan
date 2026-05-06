@@ -1,26 +1,30 @@
 
-//    HAMBURGER TOGGLE SCRIPT
-const hamburger  = document.getElementById('hamburger');
-const mobileMenu = document.getElementById('mobile-menu');
+// HAMBURGER TOGGLE SCRIPT
+document.addEventListener('livewire:navigated', () => {
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-hamburger.addEventListener('click', () => {
-    const isOpen = mobileMenu.classList.toggle('open');
+    if (!hamburger || !mobileMenu) return;
 
-    // Toggle hamburger icon → X
-    hamburger.classList.toggle('open', isOpen);
+    // Reset listener lama dengan clone
+    const freshHamburger = hamburger.cloneNode(true);
+    hamburger.replaceWith(freshHamburger);
 
-    // Update ARIA for accessibility
-    hamburger.setAttribute('aria-expanded', isOpen);
-    hamburger.setAttribute('aria-label', isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi');
-});
+    freshHamburger.addEventListener('click', () => {
+        const isOpen = mobileMenu.classList.toggle('open');
 
-// Close menu when a nav link is tapped
-mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-        mobileMenu.classList.remove('open');
-        hamburger.classList.remove('open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        hamburger.setAttribute('aria-label', 'Buka menu navigasi');
+        freshHamburger.classList.toggle('open', isOpen);
+        freshHamburger.setAttribute('aria-expanded', isOpen);
+        freshHamburger.setAttribute('aria-label', isOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            freshHamburger.classList.remove('open');
+            freshHamburger.setAttribute('aria-expanded', 'false');
+            freshHamburger.setAttribute('aria-label', 'Buka menu navigasi');
+        });
     });
 });
 
@@ -34,17 +38,17 @@ window.addEventListener('scroll', () => {
 });
 
 // ── Filter kategori aktif ──
-const filterBtns = document.querySelectorAll('[aria-label="Filter Kategori"] button');
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => {
-      b.classList.remove('bg-primary');
-      b.classList.add('bg-dark');
-    });
-    btn.classList.remove('bg-dark');
-    btn.classList.add('bg-primary');
-  });
-});
+// const filterBtns = document.querySelectorAll('[aria-label="Filter Kategori"] button');
+// filterBtns.forEach(btn => {
+//   btn.addEventListener('click', () => {
+//     filterBtns.forEach(b => {
+//       b.classList.remove('bg-primary');
+//       b.classList.add('bg-dark');
+//     });
+//     btn.classList.remove('bg-dark');
+//     btn.classList.add('bg-primary');
+//   });
+// });
 
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -100,29 +104,29 @@ function tampilkanPreview(event) {
 }
 
 // ── Drag & drop ──
-const dropZone = document.getElementById('drop-zone');
+// const dropZone = document.getElementById('drop-zone');
 
-dropZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropZone.classList.add('dragover');
-});
+// dropZone.addEventListener('dragover', (e) => {
+//   e.preventDefault();
+//   dropZone.classList.add('dragover');
+// });
 
-dropZone.addEventListener('dragleave', () => {
-  dropZone.classList.remove('dragover');
-});
+// dropZone.addEventListener('dragleave', () => {
+//   dropZone.classList.remove('dragover');
+// });
 
-dropZone.addEventListener('drop', (e) => {
-  e.preventDefault();
-  dropZone.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (!file || !file.type.startsWith('image/')) return;
+// dropZone.addEventListener('drop', (e) => {
+//   e.preventDefault();
+//   dropZone.classList.remove('dragover');
+//   const file = e.dataTransfer.files[0];
+//   if (!file || !file.type.startsWith('image/')) return;
 
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    const container = document.getElementById('preview-container');
-    container.innerHTML = `
-      <img src="${ev.target.result}" alt="Preview gambar" class="w-full h-full object-cover" />
-    `;
-  };
-  reader.readAsDataURL(file);
-});
+//   const reader = new FileReader();
+//   reader.onload = (ev) => {
+//     const container = document.getElementById('preview-container');
+//     container.innerHTML = `
+//       <img src="${ev.target.result}" alt="Preview gambar" class="w-full h-full object-cover" />
+//     `;
+//   };
+//   reader.readAsDataURL(file);
+// });

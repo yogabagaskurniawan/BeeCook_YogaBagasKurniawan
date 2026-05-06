@@ -37,7 +37,7 @@ new class extends Component
                 $this->error = 'Gagal memuat data resep.';
             }
         } catch (\Exception $e) {
-            $this->error = 'Terjadi kesalahan: ' . $e->getMessage();
+            $this->error = 'Terjadi kesalahan.';
         } finally {
             $this->loading = false;
         }

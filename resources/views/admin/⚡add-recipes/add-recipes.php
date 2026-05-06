@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
 
@@ -31,8 +32,6 @@ new class extends Component
  
     // State
     public bool $isLoading = false;
-    public ?string $successMessage = null;
-    public ?string $errorMessage = null;
  
     public function mount(?string $slug = null): void
     {
@@ -89,10 +88,10 @@ new class extends Component
                 $this->carbohydrate = (string) ($nutrition['carbohydrate'] ?? '');
                 $this->fat          = (string) ($nutrition['fat'] ?? '');
             } else {
-                $this->errorMessage = 'Resep tidak ditemukan.';
+                $this->dispatch('failed-message', 'Resep tidak ditemukan.');
             }
         } catch (\Exception $e) {
-            $this->errorMessage = 'Gagal memuat data menu.';
+            $this->dispatch('failed-message', 'Gagal memuat data menu.');
         }
     }
  
@@ -158,11 +157,18 @@ new class extends Component
             'carbohydrate.required'     => 'Karbohidrat wajib diisi.',
             'fat.required'              => 'Lemak wajib diisi.',
         ]);
- 
-        $this->isLoading    = true;
-        $this->errorMessage = null;
-        $this->successMessage = null;
- 
+
+        $this->isLoading = true;
+
+        $lockKey = 'save-menu-' . auth()->id();
+        $lock    = Cache::lock($lockKey, 10);
+
+        if (! $lock->get()) {
+            $this->dispatch('failed-message', 'Permintaan sedang diproses, harap tunggu.');
+            $this->isLoading = false;
+            return;
+        }
+
         $payload = [
             'name'             => $this->name,
             'description'      => $this->description,
@@ -177,7 +183,7 @@ new class extends Component
                 'fat'          => $this->fat,
             ],
         ];
- 
+
         try {
             if ($this->mode === 'edit') {
                 $response = Http::patch(
@@ -192,22 +198,25 @@ new class extends Component
             }
 
             if ($response->successful()) {
-                $this->successMessage = $this->mode === 'edit'
-                    ? 'Resep berhasil diperbarui!'
-                    : 'Resep berhasil ditambahkan!';
+                $this->mode === 'edit'
+                    ? session()->flash('success-message', 'Resep berhasil diperbarui!')
+                    : session()->flash('success-message', 'Resep berhasil ditambahkan!');
 
                 if ($this->mode === 'add') {
-                    $this->reset(['name','description','cooking_duration','category_id',
-                                'calory','protein','carbohydrate','fat']);
+                    $this->reset(['name', 'description', 'cooking_duration', 'category_id',
+                                'calory', 'protein', 'carbohydrate', 'fat']);
                     $this->ingredients = [['description' => '']];
                     $this->recipes     = [['description' => '', 'sort_number' => 1]];
                 }
+
+                $this->redirect('/manage', navigate: true);
             } else {
-                $this->errorMessage = $response->json('message') ?? 'Terjadi kesalahan.';
+                $this->dispatch('failed-message', 'Terjadi kesalahan.');
             }
         } catch (\Exception $e) {
-            $this->errorMessage = 'Gagal terhubung ke server: ' . $e->getMessage();
+            $this->dispatch('failed-message', 'Gagal terhubung ke server.');
         } finally {
+            $lock->release();
             $this->isLoading = false;
         }
     }

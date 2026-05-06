@@ -27,7 +27,7 @@
                 <button
                     wire:click="filterCategory('')"
                     class="px-10 md:px-16 py-4 font-inter font-bold text-base rounded-xl transition-all
-                           {{ $activeCategory === '' ? 'bg-primary text-white' : 'bg-dark text-white hover:bg-gray-700' }}">
+                        {{ $activeCategory === '' ? 'bg-primary text-white' : 'bg-dark text-white hover:bg-gray-700' }}">
                     Semua
                 </button>
 

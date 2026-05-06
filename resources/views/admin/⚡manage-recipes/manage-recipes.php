@@ -19,8 +19,6 @@ new class extends Component
 
     // Property untuk upload gambar
     public $uploadFile = null;  // file sementara
-    public string $uploadError = '';
-    public bool $uploadSuccess = false;
 
     // Property untuk modal upload
     public bool $showUploadModal = false;
@@ -100,10 +98,16 @@ new class extends Component
                     $this->showDeleteModal = false;
                     $this->deleteMenuId   = null;
                     $this->deleteMenuName = '';
+                    $this->dispatch('success-message', 'Menu berhasil dihapus!');
                     $this->loadMenus(); // refresh tabel
+                } else {
+                    $this->showDeleteModal = false;
+                    $this->deleteMenuId   = null;
+                    $this->deleteMenuName = '';
+                    $this->dispatch('failed-message', 'Upload gagal.');
                 }
             } catch (\Exception $e) {
-                // handle error
+                $this->dispatch('failed-message', 'Menu gagal dihapus!');
             }
         });
     }
@@ -125,7 +129,6 @@ new class extends Component
     
     public function updatedUploadFile(): void
     {
-        $this->uploadError = '';
         $this->validate([
             'uploadFile' => 'required|image|max:51200', // max 50MB
         ]);
@@ -139,36 +142,40 @@ new class extends Component
 
         if (!$this->uploadMenuId) return;
 
-        try {
-            $this->validate([
-                'uploadFile' => 'required|image|max:51200',
-            ]);
-
-            if (!$this->uploadMenuId) return;
-
-            // Gunakan readStream atau get() via storage disk
-            $fileContents = $this->uploadFile->get();
-            $fileName = $this->uploadFile->getClientOriginalName();
-
-            $response = Http::attach(
-                'image',
-                $fileContents,
-                $fileName
-            )->put(
-                config('services.api.base_url') . '/menu/upload/' . $this->uploadMenuId
-            );
-
-            if ($response->successful()) {
-                $this->uploadFile    = null;
-                $this->uploadSuccess = true;
-                $this->uploadError   = '';
-                $this->loadMenus();
-            } else {
-                $this->uploadError = $response->json('message') ?? 'Upload gagal.';
+        Cache::lock('upload-image-' . $this->uploadMenuId)->block(10, function () {
+            try {
+                $this->validate([
+                    'uploadFile' => 'required|image|max:51200',
+                ]);
+    
+                if (!$this->uploadMenuId) return;
+    
+                // Gunakan readStream atau get() via storage disk
+                $fileContents = $this->uploadFile->get();
+                $fileName = $this->uploadFile->getClientOriginalName();
+    
+                $response = Http::attach(
+                    'image',
+                    $fileContents,
+                    $fileName
+                )->put(
+                    config('services.api.base_url') . '/menu/upload/' . $this->uploadMenuId
+                );
+    
+                if ($response->successful()) {
+                    $this->uploadFile    = null;
+                    $this->showUploadModal = false;
+                    $this->dispatch('success-message', 'Gambar berhasil diupload!');
+                    $this->loadMenus();
+                } else {
+                    $this->uploadFile    = null;
+                    $this->showUploadModal = false;
+                    $this->dispatch('failed-message', 'Upload gagal.');
+                }
+            } catch (\Exception $e) {
+                $this->dispatch('failed-message', 'Terjadi kesalahan saat upload.');
             }
-        } catch (\Exception $e) {
-            $this->uploadError = 'Terjadi kesalahan saat upload.';
-        }
+        });
     }
 
     public function closeUploadModal(): void
@@ -177,7 +184,5 @@ new class extends Component
         $this->uploadMenuId    = null;
         $this->uploadMenuName  = '';
         $this->uploadFile      = null;
-        $this->uploadError     = '';
-        $this->uploadSuccess   = false;
     }
 };

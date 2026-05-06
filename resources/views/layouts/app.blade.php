@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <title>BeeCook - Where Quality Meets Flavor</title>
-        <link rel="shortcut icon" type="image/x-icon" href="/users/assets/images/logo-white.png">
+        <link rel="shortcut icon" type="image/x-icon" href="/assets/images/logo/logo-beecook-color.png">
 
         <!-- Google Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -14,6 +14,9 @@
 
         <!-- Tailwind CSS -->
         <script src="https://cdn.tailwindcss.com"></script>
+
+        {{-- toastify --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
         <!-- Custom Styles -->
         <link rel="stylesheet" href="/assets/css/style.css" />
@@ -90,7 +93,8 @@
             FOOTER
         ══════════════════════════════════════ -->
         <footer class="bg-dark text-white px-6 md:px-[123px] pt-16 pb-10">
-            <div class="grid grid-cols-2 xl:flex xl:flex-row gap-8 xl:gap-44 mb-16">
+            {{-- <div class="grid grid-cols-2 xl:flex xl:flex-row gap-8 xl:gap-44 mb-16"> --}}
+            <div class="grid grid-cols-2 xl:flex xl:flex-row gap-8 xl:gap-28 mb-16">
 
                 <!-- Brand: full width di mobile -->
                 <div class="col-span-2 flex-shrink-0">
@@ -149,5 +153,88 @@
 
         <script src="/assets/js/script.js"></script>
         @livewireScripts
+
+        <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script>
+            document.addEventListener('livewire:init', () => {
+
+                Livewire.on('success-message', (event) => {
+                    Toastify({
+                        text: event,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#1a1a1a",
+                            borderLeft: "4px solid #F5C842",
+                            color: "#ffffff",
+                            borderRadius: "8px",
+                            fontFamily: "Inter, sans-serif",
+                            fontSize: "14px",
+                        }
+                    }).showToast();
+                });
+
+                Livewire.on('failed-message', (event) => {
+                    Toastify({
+                        text: event,
+                        duration: 3000,
+                        close: true,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "#1a1a1a",
+                            borderLeft: "4px solid #DA4453",
+                            color: "#ffffff",
+                            borderRadius: "8px",
+                            fontFamily: "Inter, sans-serif",
+                            fontSize: "14px",
+                        }
+                    }).showToast();
+                });
+
+            });
+        </script>
+
+        @if (session('success-message'))
+        <script>
+            Toastify({
+                text: '{{ session('success-message') }}',
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#1a1a1a",
+                    borderLeft: "4px solid #F5C842",
+                    color: "#ffffff",
+                    borderRadius: "8px",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "14px",
+                }
+            }).showToast();
+        </script>
+        @endif
+
+        @if (session('failed-message'))
+        <script>
+            Toastify({
+                text: '{{ session('failed-message') }}',
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: "#1a1a1a",
+                    borderLeft: "4px solid #DA4453",
+                    color: "#ffffff",
+                    borderRadius: "8px",
+                    fontFamily: "Inter, sans-serif",
+                    fontSize: "14px",
+                }
+            }).showToast();
+        </script>
+        @endif
     </body>
 </html>
