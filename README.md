@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🐝 BeeCook — Where Quality Meets Flavor
 
 **Aplikasi web resep makanan yang dibangun dengan Laravel + Livewire + Tailwind CSS**
